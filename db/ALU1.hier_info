@@ -1,0 +1,70 @@
+|ALU1
+a => AINVERSION:STEP0.a
+b => BINVERSION:STEP1.b
+Ainvert => AINVERSION:STEP0.Ainvert
+Binvert => BINVERSION:STEP1.Binvert
+CarryIn => FULL_ADDER:STEP4.CarryIn
+Operation[0] => mux1:STEP6.operation[0]
+Operation[1] => mux1:STEP6.operation[1]
+FinalResult <= mux1:STEP6.result
+CarryOut <= FULL_ADDER:STEP4.CarryOut
+
+
+|ALU1|AINVERSION:STEP0
+a => k.DATAB
+a => k.DATAA
+Ainvert => k.OUTPUTSELECT
+k <= k.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|ALU1|BINVERSION:STEP1
+b => l.DATAB
+b => l.DATAA
+Binvert => l.OUTPUTSELECT
+l <= l.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|ALU1|PORTAND:STEP2
+a => AndResult.IN0
+b => AndResult.IN1
+AndResult <= AndResult.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|ALU1|PORTOR:STEP3
+a => OrResult.IN0
+b => OrResult.IN1
+OrResult <= OrResult.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|ALU1|FULL_ADDER:STEP4
+a => Sum.IN0
+a => CarryOut.IN0
+a => CarryOut.IN0
+b => Sum.IN1
+b => CarryOut.IN1
+b => CarryOut.IN0
+CarryIn => Sum.IN1
+CarryIn => CarryOut.IN1
+CarryIn => CarryOut.IN1
+Sum <= Sum.DB_MAX_OUTPUT_PORT_TYPE
+CarryOut <= CarryOut.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|ALU1|PORTXOR:STEP5
+a => ResultXOR.IN0
+a => ResultXOR.IN0
+b => ResultXOR.IN1
+b => ResultXOR.IN1
+ResultXOR <= ResultXOR.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|ALU1|mux1:STEP6
+m1 => Mux0.IN0
+m2 => Mux0.IN1
+m3 => Mux0.IN2
+m4 => Mux0.IN3
+operation[0] => Mux0.IN5
+operation[1] => Mux0.IN4
+result <= Mux0.DB_MAX_OUTPUT_PORT_TYPE
+
+

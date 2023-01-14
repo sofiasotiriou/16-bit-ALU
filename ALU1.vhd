@@ -1,0 +1,260 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--AND GATE 
+ENTITY PORTAND IS 
+PORT(
+		a, b : in std_logic;
+		AndResult : out std_logic);
+END;
+
+ARCHITECTURE AND1 OF PORTAND IS 
+BEGIN 
+	AndResult <= a AND b;
+END;
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--OR GATE 
+ENTITY PORTOR IS 
+PORT( 
+		a, b : in std_logic;
+		OrResult : out std_logic);
+END;
+
+ARCHITECTURE OR1 OF PORTOR IS 
+BEGIN 
+	OrResult <= a OR b; 
+END;
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--FULL ADDER		
+ENTITY FULL_ADDER IS 
+PORT (
+	a, b, CarryIn : IN STD_LOGIC;
+	Sum, CarryOut : OUT STD_LOGIC);
+END; 
+
+ARCHITECTURE FA OF FULL_ADDER IS
+BEGIN
+Sum <= a XOR b XOR CarryIn; 
+CarryOut <= (a AND b) OR (CarryIn AND a) OR (CarryIn AND b); 
+END;		
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--AInvert Multiplexer 
+ENTITY AINVERSION IS 
+PORT (
+	a, Ainvert : in std_logic;
+	k : out std_logic);
+END; 
+
+ARCHITECTURE INVA OF AINVERSION IS 
+BEGIN 
+	k <= a when Ainvert = '0' else NOT(a);
+END;
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--Binvert Multiplexer 
+ENTITY BINVERSION IS 
+PORT (
+	b, Binvert : in std_logic;
+	l : out std_logic);
+END; 
+
+ARCHITECTURE INVB OF BINVERSION IS 
+BEGIN 
+	l <= b when Binvert = '0' else NOT(b);
+END;
+		
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;		
+		
+--SUBTRACTION
+ENTITY SUB IS 
+PORT (
+	a, b, Binvert ,CarryIn : IN STD_LOGIC;
+	ResultSUB : OUT STD_LOGIC);
+END; 
+
+ARCHITECTURE S OF SUB IS
+
+COMPONENT BINVERSION IS 
+PORT (
+	b, Binvert : in std_logic;
+	l : out std_logic);
+END COMPONENT;
+
+COMPONENT FULL_ADDER IS 
+PORT (
+	a, b, CarryIn : IN STD_LOGIC;
+	Sum, CarryOut : OUT STD_LOGIC);
+END COMPONENT; 
+
+SIGNAL NewB, add, Cout : std_logic;
+BEGIN 
+STEP0: BINVERSION PORT MAP (b, Binvert, NewB);
+STEP1: FULL_ADDER PORT MAP (a, NewB, CarryIn, add, Cout);
+END;
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--NOR GATE
+ENTITY PORTNOR IS 
+PORT (
+a, b, Operation, Ainvert, Binvert : IN STD_LOGIC;
+ResultNOR : OUT STD_LOGIC);
+END; 
+
+ARCHITECTURE P1 OF PORTNOR IS
+BEGIN
+ResultNOR <= (NOT(a) AND NOT(b)) WHEN Binvert='1' AND Ainvert='1' AND Operation='0';
+END;
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--NAND GATE 
+ENTITY PORTNAND IS 
+PORT (
+a, b, Operation, Ainvert, Binvert : IN STD_LOGIC;
+ResultNAND : OUT STD_LOGIC);
+END; 
+
+ARCHITECTURE P2 OF PORTNAND IS
+BEGIN
+ResultNAND <= (NOT(a) AND NOT(b)) WHEN Binvert='1' AND Ainvert='1' AND Operation='1';
+END;
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--XOR GATE
+ENTITY PORTXOR IS 
+PORT (
+	a, b : IN STD_LOGIC;
+	ResultXOR : OUT STD_LOGIC);
+END; 
+
+ARCHITECTURE P3 OF PORTXOR IS
+BEGIN
+ResultXOR <= (a AND NOT(b)) OR (NOT(a) AND b);
+END;
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+--4to1 MULTIPLEXER (OPERATION)
+ENTITY mux1 IS
+PORT(
+    m1, m2, m3, m4: in  std_logic;
+	 operation : in std_logic_vector (1 downto 0);
+    result: out std_logic);
+END;
+
+ARCHITECTURE result OF mux1 IS
+BEGIN
+WITH operation SELECT
+        result <= m1 WHEN "00",
+        m2 WHEN "01",
+        m3 WHEN "10",
+        m4 WHEN OTHERS;
+end;
+
+
+
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY ALU1 IS 
+PORT (
+		a, b, Ainvert, Binvert, CarryIn: in std_logic;
+		Operation : in std_logic_vector (1 downto 0);
+		FinalResult, CarryOut : out std_logic);
+END; 
+
+ARCHITECTURE STRUCTURAL OF ALU1 IS 
+COMPONENT PORTAND IS 
+PORT(
+		a, b : in std_logic;
+		AndResult : out std_logic);
+END COMPONENT;
+
+COMPONENT PORTOR IS 
+PORT( 
+		a, b : in std_logic;
+		OrResult : out std_logic);
+END COMPONENT;
+
+COMPONENT FULL_ADDER IS
+PORT (
+	a, b, CarryIn : IN STD_LOGIC;
+	Sum, CarryOut : OUT STD_LOGIC);
+END COMPONENT; 
+
+COMPONENT AINVERSION IS
+PORT (
+	a, Ainvert : in std_logic;
+	k : out std_logic);
+END COMPONENT; 
+
+COMPONENT BINVERSION IS
+PORT (
+	b, Binvert : in std_logic;
+	l : out std_logic);
+END COMPONENT; 
+
+COMPONENT PORTXOR IS 
+PORT (
+	a, b : IN STD_LOGIC;
+	ResultXOR : OUT STD_LOGIC);
+END COMPONENT;
+
+COMPONENT SUB IS 
+PORT (
+	a, b, Binvert ,CarryIn : IN STD_LOGIC;
+	ResultSUB : OUT STD_LOGIC);
+END COMPONENT; 
+
+
+COMPONENT PORTNOR IS
+PORT (
+a, b, Operation, Ainvert, Binvert : IN STD_LOGIC;
+ResultNOR : OUT STD_LOGIC);
+END COMPONENT; 
+
+
+COMPONENT PORTNAND IS 
+PORT (
+a, b, Operation, Ainvert, Binvert : IN STD_LOGIC;
+ResultNAND : OUT STD_LOGIC);
+END COMPONENT; 
+
+
+COMPONENT mux1 IS
+PORT(
+    m1, m2, m3, m4: in  std_logic;
+	 operation : in std_logic_vector (1 downto 0);
+    result: out std_logic);
+END COMPONENT;
+
+SIGNAL INVA, INVB, M0, M1, M2, M3: std_logic;
+
+BEGIN 
+STEP0: AINVERSION PORT MAP (a, AINVERT, INVA);
+STEP1: BINVERSION PORT MAP (b, BINVERT, INVB);
+STEP2: PORTAND PORT MAP (INVA, INVB, M0);
+STEP3: PORTOR PORT MAP (INVA, INVB, M1);
+STEP4: FULL_ADDER PORT MAP (INVA, INVB, CarryIn, M2, CarryOut);
+STEP5: PORTXOR PORT MAP (INVA, INVB, M3);
+STEP6: mux1 PORT MAP (M0, M1, M2, M3, operation, FinalResult);
+END;
